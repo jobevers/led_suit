@@ -20,15 +20,10 @@ function randomPatterns() {
 	var offset = all_offsets[chance.integer({min: 0, max: all_offsets.length - 1})];
 	var left_pattern = new Pattern(getOffsets(0, offset, 0));
 	var right_pattern = new Pattern(getOffsets(0, offset, nColumns));
-	return {left: left_pattern, right: right_pattern};
-	
+	return {left: left_pattern, right: right_pattern};	
 }
 
 
 $(document).ready(function(){
-	patterns = randomPatterns();
-	var color_map = randomColorMap();
-	var left_painter = new Painter(color_map, patterns.left);
-	var right_painter = new Painter(color_map, patterns.right);
-	setTimeout(applyPattern, 10, 0, 100, left_painter, right_painter);
+	startPattern(100);
 });

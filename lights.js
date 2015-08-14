@@ -230,11 +230,24 @@ function getOffsets(input, fn, start_column) {
 	return offsets;
 }
 
+// eventually we'll want step size to depend on the pattern
+function startPattern(step_size) {
+	patterns = randomPatterns();
+	var color_map = randomColorMap();
+	var left_painter = new Painter(color_map, patterns.left);
+	var right_painter = new Painter(color_map, patterns.right);
+	applyPattern(0, step_size, left_painter, right_painter);
+}
 
 function applyPattern(i, step_size, left_painter, right_painter) {
-	setLights(left_cells, left_painter.paint(i));
-	setLights(right_cells, right_painter.paint(i));
-	setTimeout(applyPattern, step_size, i + 1, step_size, left_painter, right_painter);
+	// switch every 15 seconds
+	if (i * step_size > 15000) {
+		startPattern(step_size);
+	} else {
+		setLights(left_cells, left_painter.paint(i));
+		setLights(right_cells, right_painter.paint(i));
+		setTimeout(applyPattern, step_size, i + 1, step_size, left_painter, right_painter);
+	}
 }
 
 
