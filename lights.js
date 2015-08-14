@@ -98,6 +98,22 @@ ColorToComplementBySaturationColorMap.prototype.color = function(i) {
 };
 
 
+var ColorToComplementByValueColorMap = function(color) {
+	var complement = mod(color + 180, 360);
+	saturation_range = _.range(100, 0, -10).concat(_.range(0, 110, 10));
+	colors = Array.apply(null, Array(11)).map(Number.prototype.valueOf, color);
+	colors = colors.concat(Array.apply(null, Array(10)).map(Number.prototype.valueOf, complement));
+	range = _.zip(colors, saturation_range);
+	// need the slice so that it does not repeat the two endpoints
+	this.range = range.concat(range.slice(1, -1).reverse());
+};
+
+
+ColorToComplementBySaturationColorMap.prototype.color = function(i) {
+	var element = wrappedIndex(this.range, i);
+	return new tinycolor('hsv ' + element[0] + ' '+ element[1] + '% 100%').toRgb();
+};
+
 
 
 /* There are a few different colors maps I can think of going with

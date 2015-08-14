@@ -1,14 +1,18 @@
 function randomColorMap() {
 	var f = chance.floating({min:0, max:1});
 	console.log(f);
-	if (f < .2) {
+	if (f < .3) {
 		return new ColorMap(chance.bool());
 	} else if (f < .4) {
 		return new ColorToWhiteColorMap(chance.integer({min: 0, max: 359}), chance.bool());
-	} else if (f < .6) {
+	} else if (f < .5) {
 		return new ColorToBlackColorMap(chance.integer({min: 0, max: 359}), chance.bool());
-	} else {
+	} else  if (f < .6) {
 		return new ColorToComplementBySaturationColorMap(chance.integer({min: 0, max: 359}));
+	} else  if (f < .7) {
+		return new ColorToComplementByValueColorMap(chance.integer({min: 0, max: 359}));
+	} else  if (f < .8) {
+		return new ColorToComplementByHueColorMap(chance.integer({min: 0, max: 359}));
 	}
 }
 
