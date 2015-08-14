@@ -67,8 +67,8 @@ ColorToBlackColorMap.prototype.color = function(i) {
 
 var ColorToComplementByHueColorMap = function(color, wrapped) {
 	var complement = mod(color + 180, 360);
-	var start = min(color, complement);
-	var end = max(color, complement);
+	var start = Math.min(color, complement);
+	var end = Math.max(color, complement);
 	var step_size = (end - start) / 10;
 	if (wrapped) {
 		this.range = wrappedRange(start, end, step_size);
@@ -100,18 +100,18 @@ ColorToComplementBySaturationColorMap.prototype.color = function(i) {
 
 var ColorToComplementByValueColorMap = function(color) {
 	var complement = mod(color + 180, 360);
-	saturation_range = _.range(100, 0, -10).concat(_.range(0, 110, 10));
+	value_range = _.range(100, 0, -10).concat(_.range(0, 110, 10));
 	colors = Array.apply(null, Array(11)).map(Number.prototype.valueOf, color);
 	colors = colors.concat(Array.apply(null, Array(10)).map(Number.prototype.valueOf, complement));
-	range = _.zip(colors, saturation_range);
+	range = _.zip(colors, value_range);
 	// need the slice so that it does not repeat the two endpoints
 	this.range = range.concat(range.slice(1, -1).reverse());
 };
 
 
-ColorToComplementBySaturationColorMap.prototype.color = function(i) {
+ColorToComplementByValueColorMap.prototype.color = function(i) {
 	var element = wrappedIndex(this.range, i);
-	return new tinycolor('hsv ' + element[0] + ' '+ element[1] + '% 100%').toRgb();
+	return new tinycolor('hsv ' + element[0] + ' 100% '+ element[1] + '%').toRgb();
 };
 
 
