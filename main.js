@@ -13,7 +13,7 @@ function randomColorMap() {
 }
 
 function randomPatterns() {
-	var offset = all_offsets[chance.integer({min: 0, max: all_offsets.length})];
+	var offset = all_offsets[chance.integer({min: 0, max: all_offsets.length - 1})];
 	var left_pattern = new Pattern(getOffsets(0, offset, 0));
 	var right_pattern = new Pattern(getOffsets(0, offset, nColumns));
 	return {left: left_pattern, right: right_pattern};
