@@ -4,5 +4,5 @@ function diagonalOffset(input, is_back, row, column, i) {
 
 
 $(document).ready(function(){
-	setTimeout(applyPattern, 1000, 0, 100, diagonalOffset, new ColorMap());
+	setTimeout(applyPattern, 1000, 0, 100, diagonalOffset, new ColorToWhiteColorMap(120));
 });

@@ -22,13 +22,122 @@ Cell.prototype.light = function(r, g, b){
 };
 
 
-var ColorMap = function() {};
-
-
+var ColorMap = function(wrapped) {
+	if (wrapped) {
+		this.range = wrappedRange(0, 360, 10);
+	} else {
+		this.range = _.range(0, 360, 10);
+	}
+};
 ColorMap.prototype.color = function(i) {
-	var theta = mod(i, 36) * 10;
+	var theta = wrappedIndex(this.range, i);
 	return new tinycolor('hsv ' + theta + ' 100% 100%').toRgb();
 };
+
+function wrappedIndex(array, idx) {
+	idx = mod(idx, array.length);
+	return array[idx];
+}
+
+var ColorToWhiteColorMap = function(color, wrapped) {
+	this.my_color = color;
+	if (wrapped) {
+		this.range = wrappedRange(0, 100, 10);
+	} else {
+		this.range = _.range(0, 100, 10);
+	}
+};
+ColorToWhiteColorMap.prototype.color = function(i) {
+	var saturation = wrappedIndex(this.range, i);
+	return new tinycolor('hsv ' + this.my_color + ' ' + saturation + '% 100%').toRgb();
+};
+
+var ColorToBlackColorMap = function(color, wrapped) {
+	this.my_color = color;
+	if (wrapped) {
+		this.range = wrappedRange(0, 100, 10);
+	} else {
+		this.range = _.range(0, 100, 10);
+	}
+};
+ColorToBlackColorMap.prototype.color = function(i) {
+	var value = wrappedIndex(this.range, i);
+	return new tinycolor('hsv ' + this.my_color + ' 100% ' + value +'%').toRgb();
+};
+
+var ColorToComplementByHueColorMap = function(color, wrapped) {
+	var complement = mod(color + 180, 360);
+	var start = min(color, complement);
+	var end = max(color, complement);
+	var step_size = (end - start) / 10;
+	if (wrapped) {
+		this.range = wrappedRange(start, end, step_size);
+	} else {
+		this.range = _.range(start, end, step_size);
+	}
+};
+ColorToComplementByHueColorMap.prototype.color = function(i) {
+	var theta = wrappedIndex(this.range, i);
+	return new tinycolor('hsv ' + theta + ' 100% 100%').toRgb();
+};
+
+var ColorToComplementBySaturationColorMap = function(color) {
+	var complement = mod(color + 180, 360);
+	saturation_range = _.range(100, 0, -10).concat(_.range(0, 110, 10));
+	colors = Array.apply(null, Array(11)).map(Number.prototype.valueOf, color);
+	colors = colors.concat(Array.apply(null, Array(10)).map(Number.prototype.valueOf, complement));
+	range = _.zip(colors, saturation_range);
+	// need the slice so that it does not repeat the two endpoints
+	this.range = range.concat(range.slice(1, -1).reverse());
+};
+
+
+ColorToComplementBySaturationColorMap.prototype.color = function(i) {
+	var element = wrappedIndex(this.range, i);
+	return new tinycolor('hsv ' + element[0] + ' '+ element[1] + '% 100%').toRgb();
+};
+
+
+
+
+/* There are a few different colors maps I can think of going with
+ # - All of these can be:
+ *   - in a loop
+ *   - in a sawtooth
+ * - The full HSV color map with theta varying
+ * - Interpolate between a color and black
+ * - Interpolate between a color and white
+ * - Interpolate between two colors
+ *   - by changing theta
+ *   - by changing saturation
+ *   - by changing value
+*/
+
+
+var Pattern = function(offsets){
+	this.my_offsets = offsets;
+};
+
+Pattern.prototype.offsets = function(input, msg){
+	return this.my_offsets;
+};
+
+
+var Painter = function(color_map, pattern) {
+	this.color_map = color_map;
+	this.pattern = pattern;
+};
+
+
+Painter.prototype.paint = function(input){
+	var me = this;
+	var colors = _.map(
+		this.pattern.offsets(input), function(offset) {
+			return me.color_map.color(offset - input);
+		});
+	return colors;
+};
+
 
 
 function setLights(cells, rgb_values){
@@ -106,12 +215,10 @@ function getOffsets(input, fn, start_column) {
 }
 
 
-function applyPattern(i, step_size, offset_fn, color_map) {
-	var left_offset = getOffsets(i, offset_fn, 0);
-	setLightsFromOffset(i, left_offset, color_map, left_cells);
-	var right_offset = getOffsets(i, offset_fn, nColumns);
-	setLightsFromOffset(i, right_offset, color_map, right_cells);
-	setTimeout(applyPattern, step_size, i + 1, step_size, offset_fn, color_map);
+function applyPattern(i, step_size, left_painter, right_painter) {
+	setLights(left_cells, left_painter.paint(i));
+	setLights(right_cells, right_painter.paint(i));
+	setTimeout(applyPattern, step_size, i + 1, step_size, left_painter, right_painter);
 }
 
 
