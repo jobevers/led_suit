@@ -11,7 +11,7 @@ function randomColorMap() {
 		return new ColorToComplementBySaturationColorMap(chance.integer({min: 0, max: 359}));
 	} else  if (f < .7) {
 		return new ColorToComplementByValueColorMap(chance.integer({min: 0, max: 359}));
-	} else  if (f < .8) {
+	} else {
 		return new ColorToComplementByHueColorMap(chance.integer({min: 0, max: 359}));
 	}
 }
