@@ -1,6 +1,3 @@
-function diagonalOffset(input, is_back, row, column, i) {
-	return row + column;
-}
 
 
 $(document).ready(function(){

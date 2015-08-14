@@ -1,6 +1,4 @@
-function rowOffset(input, is_back, row, column, i) {
-	return row;
-}
+
 
 
 $(document).ready(function(){
