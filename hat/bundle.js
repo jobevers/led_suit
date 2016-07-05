@@ -117,7 +117,7 @@
 			this.color = color;
 			this.step = 0;
 			this.change = 's';
-			this.target_v = chance.integer({min:0, max:255});
+			this.target_v = chance.integer({min:32, max:255});
 		}
 	}
 	
@@ -130,14 +130,17 @@
 		new Pixel([], new HSV(hue + 15))
 	];
 	
-	var rows = 20;
-	var cols = 30;
+	var rows = 10;
+	var cols = 25;
 	table = $('table');
 	for (i=0; i<rows; i++) {
 		var row = $("<tr></tr>");
 		for (j=0; j<cols; j++) {
 			var pixel = $("<div></div>").addClass("pixel");
-			pixels[chance.integer({min:0, max: 3})].pixel.push(pixel);
+			var index = chance.integer({min:0, max: 6});
+			if (index <= 3) {
+				pixels[index].pixel.push(pixel);
+			}
 			var col = $("<td></td>");
 			col.append(pixel);
 			row.append(col);
@@ -154,7 +157,7 @@
 			p.color.h = p.color.h + 119;
 		}
 		if (p.step % 64 == 0) {
-			p.target_v = chance.integer({min: 0, max: 255});
+			p.target_v = chance.integer({min: 32, max: 255});
 		}
 		_.map(p.pixel, function(pp){ pp.css("background-color", p.color.toRgbString());});
 		setTimeout(changeColor, chance.integer({min: 20, max: 60}), i);
@@ -200,7 +203,7 @@
 	
 	
 	// module
-	exports.push([module.id, "body {\n\tbackground-color: #808080\n}\n\ndiv.pixel {\n\tmargin-left: 10px;\n\tmargin-right: 10px;\n\tmargin-top: 10px;\n\tmargin-bottom: 10px;\n\tbackground-color: black;\n\theight: 10px;\n\twidth: 10px;\n}", ""]);
+	exports.push([module.id, "body {\n\tbackground-color: #202020\n}\n\ndiv.pixel {\n\tmargin-left: 10px;\n\tmargin-right: 10px;\n\tmargin-top: 10px;\n\tmargin-bottom: 10px;\n\tbackground-color: #202020;\n\theight: 10px;\n\twidth: 10px;\n}", ""]);
 	
 	// exports
 
